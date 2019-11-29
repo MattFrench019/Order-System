@@ -28,17 +28,17 @@ def edit_order(order_id):
 ### -------Frontend Portals------- ###
 @app.route('/waiter', methods=['GET'])
 def waiter_portal():
-	flask.abort(501, '501 Not Implemented')
+	return flask.render_template('waiter.html')
 
 
 @app.route('/chef', methods=['GET'])
 def chef_portal():
-	flask.abort(501, '501 Not Implemented')
+	return flask.render_template('chef.html')
 
 
 @app.route('/manager', methods=['GET'])
 def manager_portal():
-	flask.abort(501, '501 Not Implemented')
+	return flask.render_template('manager.html')
 
 
 if __name__ == '__main__':
