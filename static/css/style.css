@@ -1,0 +1,118 @@
+
+/* Headings */
+h1 {
+    font-family: 'Alata', serif;
+    text-align: center;
+    margin-top: 0;
+}
+
+h2 {
+    font-family: 'Alata', serif;
+    text-align: center;
+}
+
+/* Page Wrappers */
+.page {
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 88vh;
+}
+
+.sub-page {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+/* Option Page Items */
+.option-page.button {
+    font-family: 'Alata', serif;
+    font-size: 30px;
+    width: 50%;
+    height: 10%;
+    margin: 1.5%;
+}
+
+/* Create Order Page Items */
+.create-order.menu-grid {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-auto-rows: 10vh;
+    grid-column-gap: 0.5vh;
+    grid-row-gap: 0.5vh;
+}
+
+.create-order.menu-grid-item {
+    height: 100%;
+    width: 100%;
+}
+
+.create-order.option-grid {
+    display: grid;
+    margin-top: 2.75vh;
+    margin-bottom: 2.75vh;
+    grid-template-columns: auto auto;
+    grid-template-rows: 7.5vh;
+    grid-column-gap: 3vh;
+}
+
+.create-order.menu-button {
+    height: 100%;
+    width: 100%;
+}
+
+.create-order.option-button {
+    height: 100%;
+    width: 100%;
+}
+
+.create-order.option-button.save {
+    background-color: lawngreen;
+}
+
+.create-order.option-button.discard {
+    background-color: red;
+}
+
+.create-order.item-grid {
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    grid-auto-rows: 7vh;
+    grid-column-gap: 0;
+    grid-row-gap: 0;
+
+}
+
+.create-order.item-grid-button {
+    margin: 0.5vh;
+}
+
+/* Choose Table Items */
+.choose-table.table-grid {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-auto-rows: 10vh;
+    grid-column-gap: 0.5vh;
+    grid-row-gap: 0.5vh;
+}
+
+.choose-table.table-grid-item {
+    height: 100%;
+    width: 100%;
+}
+
+.choose-table.table-button {
+    height: 100%;
+    width: 100%;
+}
+
+/* Choose Order */
+.orders-page.orders-grid {
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    grid-auto-rows: 7vh;
+}
+
+.orders-page.order-button {
+    margin: 0.5vh;
+}
