@@ -3,8 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <title>Waiter Portal</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Alata' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="static/css/style-02.css">
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+
 </head>
 <body>
 
+    <div class="page">
+        <h1>Waiter Portal</h1>
+        <div class="sub-page" id="option-page" style="display: block">
+            <button class="option-page button" onclick="manager.goToChooseTable()"><b>＋</b> New Order</button>
+            <button class="option-page button" onclick="manager.goToOrderList()">✎ Edit Order</button>
+        </div>
+
+        <div class="sub-page" id="choose-table">
+            <h2>Choose a Table</h2>
+            <div class="choose-table table-grid">
+                {% for table in tables %}
+                <div class="choose-table table-grid-item">
+                    <button class="choose-table table-button" id="table-{{ table }}" onclick="manager.goToNewOrder(this.id)">{{ table }}</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="sub-page" id="create-order" style="display: none">
+            <h2 id="create-order order-title">Loading...</h2>
+
+            <div class="create-order menu-grid" id="create-order menu-grid">
+                {% for item in items %}
+                <div class="create-order menu-grid-item">
+                    <button class="create-order menu-button" id="id-{{ item.id }}&name-{{ item.name }}" onclick="manager.addItem(this)">{{ item.name }} {{ item.price }}</button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="create-order option-grid">
+                <button class="create-order option-button save" onclick="manager.saveOrder()">✔ Save Order</button>
+                <button class="create-order option-button discard" onclick="manager.goToMain()">✘ Discard Order</button>
+            </div>
+
+            <div class="create-order item-grid" id="create-order item-grid">
+
+            </div>
+        </div>
+        <div class="sub-page" id="orders-page" style="display: none">
+            <div class="orders-page orders-grid" id="orders-page orders-grid">
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="static/js/waiter-02.js"></script>
 </body>
 </html>
