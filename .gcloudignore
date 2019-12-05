@@ -3,6 +3,9 @@
 # PyCharm
 .idea
 
+# Git
+.git
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
