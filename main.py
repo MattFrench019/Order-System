@@ -8,28 +8,51 @@ from flask import request, jsonify, render_template, Flask
 app = Flask(__name__)
 
 
-# Holds a list of orders
-class OrderList:
+class ListLogic:
+	# Constructor
 	def __init__(self, _list):
+		# Takes list and stores to private list
 		self._list = _list
 
-	def get(self, _id):
-		for order in self._list:
-			if order.id == _id:
-				return order
-		return None
-
+	# Logic to add a new order object to
 	def add(self, order):
 		self._list.append(order)
 
+	# Logic to find Order object by the Id of the order
+	def get(self, _id):
+
+		# Loop through all items in private list
+		for item in self._list:
+			if item.id == _id:
+				return item
+
+		# Return None if not found
+		return None
+
+	# Public getter for private list
 	@property
 	def list(self):
 		return self._list
 
+
+# Holds a list of Order objects
+class OrderList(ListLogic):
+
+	# Constructor
+	def __init__(self, _list):
+		super(OrderList, self).__init__(_list)
+
+	# Public getter for the next id for a new order
 	@property
 	def next_index(self):
-		return self._list.__len__()
+		biggest_index = 0
+		for order in self._list:
+			if order.id > biggest_index:
+				biggest_index = order.id
 
+		return biggest_index
+
+	# Returns a jsonify-ible version of the object
 	@property
 	def json(self):
 		return_list = []
@@ -39,29 +62,37 @@ class OrderList:
 		return return_list
 
 
-# Holds several details for an order
+# Holds the details for an order
 class Order:
-	def __init__(self, _id, _list, table):
-		self.id = _id
-		self.list = _list
-		self.table = table
 
+	# Constructor
+	def __init__(self, _id, _list, table):
+		self.id = _id       # Id
+		self.list = _list   # List of items
+		self.table = table  # Table number
+
+	# Generates the price
 	@property
 	def price(self):
 		price = 0.0
 		for item in self.list:
 			price += items.get(item).price
 
+		# Round to avoid floating-point rounding errors
 		return round(price, 2)
 
+	# Returns a tuple with all important attributes
 	@property
 	def tuple(self):
 		return self.id, self.table, self.tuple_list, self.readable
 
+	# Used to show the order on the front-end
 	@property
 	def readable(self):
 		return str(self.id) + ' - Table ' + str(self.table) + ' £' + str(self.price)
 
+	# Returns an array of items with the item id and the item name
+	# Used in the edit menu
 	@property
 	def tuple_list(self):
 		return_list = []
@@ -73,6 +104,7 @@ class Order:
 
 # Holds several details for an item
 class Item:
+	# Constructor
 	def __init__(self, name, price, _id):
 		self.name = name
 		self.price = price
@@ -80,21 +112,10 @@ class Item:
 
 
 # Holds a list of items
-class ItemList:
+class ItemList(ListLogic):
+	# Constructor
 	def __init__(self, _list):
-		# Holds the list of items
-		self._list = _list
-
-	def get(self, _id):
-		# Finds an item from an id
-		for item in self._list:
-			if item.id == _id:
-				return item
-		return None
-
-	@property
-	def list(self):
-		return self._list
+		super(ItemList, self).__init__(_list)
 
 
 # Init Items list
@@ -126,6 +147,7 @@ tables = range(1, 12 + 1)
 # Handles when the front-end wants to get a list of orders
 @app.route('/orders/get/all', methods=['GET'])
 def get_orders():
+	# Returns a JSON list of all items in the OrderList
 	return jsonify(orders.json)
 
 
@@ -159,28 +181,21 @@ def edit_order():
 	# We need to turn all of the values into integers
 	order_items = [int(x) for x in order_items]
 
+	# Update the order's list of items
 	orders.get(order_id).list = order_items
 
-	print(orders.json)
-
+	# Return a :)
 	return jsonify(200)
 
 
-### -------Frontend Portals------- ###
+### -------Frontend Portal------- ###
 @app.route('/waiter', methods=['GET'])
 def waiter_portal():
 	return render_template('waiter.html', items=items.list, tables=tables)
 
 
-@app.route('/chef', methods=['GET'])
-def chef_portal():
-	return render_template('chef.html')
-
-
-@app.route('/manager', methods=['GET'])
-def manager_portal():
-	return render_template('manager.html')
-
-
+# Main
 if __name__ == '__main__':
+	# Host 0.0.0.0 exposes the app to other computers
+	# Host 127.0.0.1 is only on the loop-back
 	app.run(debug=True, host="0.0.0.0")
