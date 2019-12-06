@@ -1,3 +1,7 @@
+# Compatibility
+from __future__ import print_function
+
+# Imports optimised for readability
 from flask import request, jsonify, render_template, Flask
 
 # Create flask app
@@ -56,7 +60,7 @@ class Order:
 
 	@property
 	def readable(self):
-		return f'({self.id}) - Table {self.table} £{self.price}'
+		return str(self.id) + ' - Table ' + str(self.table) + ' £' + str(self.price)
 
 	@property
 	def tuple_list(self):
