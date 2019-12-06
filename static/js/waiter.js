@@ -122,7 +122,7 @@ class Manager{
 
 
     removeItem(element){
-        var itemId = parseInt(element.id.split('-')[1]);
+        var itemId = element.id.split('-')[1];
 
         var existingItem = document.getElementById('itemgrid-' + itemId);
 
