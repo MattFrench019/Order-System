@@ -10,61 +10,91 @@ from __future__ import print_function
 # Imports optimised for readability
 from flask import request, jsonify, render_template, Flask
 
+# For connection to DB
+import mysql.connector as sql
+
 # Create flask app
 app = Flask(__name__)
+
+# Connection to DB
+db = sql.connect(
+	host='34.89.161.143',
+	user='root',
+	password='password',
+	database='OrderSystem'
+)
 
 
 class ListLogic:
 	# Constructor
-	def __init__(self, _list):
-		# Takes list and stores to private list
-		self._list = _list
+	def __init__(self, db_table):
+		self.db_table = db_table
 
-	# Logic to add a new order object to
-	def add(self, order):
-		self._list.append(order)
+	# Logic to add a new object to the table
+	def add(self, _object):
+		pass
 
 	# Logic to find Order object by the Id of the order
 	def get(self, _id):
+		pass
 
-		# Loop through all items in private list
-		for item in self._list:
-			if item.id == _id:
-				return item
-
-		# Return None if not found
-		return None
+	def _create_objects(self, _list):
+		pass
 
 	# Public getter for private list
 	@property
 	def list(self):
-		return self._list
+		cursor = db.cursor()
+		cursor.execute('SELECT * FROM {}'.format(self.db_table))
+
+		return self._create_objects(cursor.fetchall())
+
+	# Public getter for the next id for a new order
+	@property
+	def next_index(self):
+		biggest_index = 0
+		for order in self.list:
+			if order.id > biggest_index:
+				biggest_index = order.id
+
+		return biggest_index + 1
 
 
 # Holds a list of Order objects
 class OrderList(ListLogic):
 
 	# Constructor
-	def __init__(self, _list):
-		super(OrderList, self).__init__(_list)
+	def __init__(self):
+		super(OrderList, self).__init__('orders')
 
-	# Public getter for the next id for a new order
-	@property
-	def next_index(self):
-		biggest_index = 0
-		for order in self._list:
-			if order.id > biggest_index:
-				biggest_index = order.id
+	def _create_objects(self, _list):
+		new_list = []
+		for order in _list:
+			new_list.append(Order(order[0], order[1].split(','), order[2]))
 
-		return biggest_index
+		return new_list
+
+	def edit(self, _id, _items):
+		cursor = db.cursor()
+		query = "UPDATE orders SET items = '{}' WHERE id = {};".format(str(_items)[1:-1], _id)
+		cursor.execute(query)
+		db.commit()
+
+	def add(self, _object):
+		print('hello world')
+		cursor = db.cursor()
+		query = "INSERT INTO orders (id, items, tablenum) VALUES ({}, '{}', {});".format(str(_object.id), str(_object.list)[1:-1], str(_object.table))
+		cursor.execute(query)
+		db.commit()
 
 	# Returns a jsonify-ible version of the object
 	@property
 	def json(self):
 		return_list = []
-		for order in self._list:
+		for order in self.list:
 			return_list.append(order.tuple)
 
+		print(return_list)
 		return return_list
 
 
@@ -81,8 +111,13 @@ class Order:
 	@property
 	def price(self):
 		price = 0.0
+
+		items_list = items.list
+		items_list = [x.price for x in items_list]
+
 		for item in self.list:
-			price += items.get(item).price
+			price += items_list[int(item) - 1]
+
 
 		# Round to avoid floating-point rounding errors
 		return round(price, 2)
@@ -102,9 +137,14 @@ class Order:
 	@property
 	def tuple_list(self):
 		return_list = []
-		for item in self.list:
-			return_list.append((item, items.get(item).name))
 
+		items_list = items.list
+		items_list = [x.name for x in items_list]
+
+		for item in self.list:
+			return_list.append((item, items_list[int(item) - 1]))
+
+		print(return_list)
 		return return_list
 
 
@@ -120,29 +160,22 @@ class Item:
 # Holds a list of items
 class ItemList(ListLogic):
 	# Constructor
-	def __init__(self, _list):
-		super(ItemList, self).__init__(_list)
+	def __init__(self):
+		super(ItemList, self).__init__('items')
+
+	def _create_objects(self, _list):
+		new_list = []
+		for item in _list:
+			new_list.append(Item(item[1], item[2], item[0]))
+
+		return new_list
 
 
 # Init Items list
-items = ItemList([
-	Item('All Day Breakfast (L)', 5.5, 1),
-	Item('All Day Breakfast (S)', 3.5, 2),
-	Item('Hot Dog', 3.0, 3),
-	Item('Burger', 4.0, 4),
-	Item('Cheese Burger', 4.25, 5),
-	Item('Chicken Goujons', 3.5, 6),
-	Item('Fries', 1.75, 7),
-	Item('Salad', 2.2, 8),
-	Item('Milkshake', 1.3, 9),
-	Item('Soft Drink', 1.3, 10),
-	Item('Still Water', 0.9, 11),
-	Item('Sparkling Water', 0.9, 12),
-	Item('Coffee', 0.8, 13)
-])
+items = ItemList()
 
 # Init Orders list
-orders = OrderList([])
+orders = OrderList()
 
 # Init Tables
 tables = range(1, 12 + 1)
@@ -188,7 +221,7 @@ def edit_order():
 	order_items = [int(x) for x in order_items]
 
 	# Update the order's list of items
-	orders.get(order_id).list = order_items
+	orders.edit(order_id, order_items)
 
 	# Return a :)
 	return jsonify(200)
