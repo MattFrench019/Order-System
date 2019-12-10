@@ -143,7 +143,7 @@ class Manager{
         // existing logic, makes my life easier
         // .bind(this) allows me to access the Manager object within the loop
         item[2].forEach(function (order_item) {
-            var itemId = order_item[0];
+            var itemId = String(parseInt(order_item[0]));
             var itemName = order_item[1];
 
             this._addItem(itemId, itemName);
