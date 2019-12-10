@@ -233,6 +233,10 @@ def waiter_portal():
 	return render_template('waiter.html', items=items.list, tables=tables)
 
 
+@app.route('/admin', methods=['GET'])
+def waiter_portal():
+	return render_template('admin.html')
+
 # Main
 if __name__ == '__main__':
 	# Host 0.0.0.0 exposes the app to other computers
