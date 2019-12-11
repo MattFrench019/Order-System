@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal</title>
+
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous">
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="static/css/admin-style.css">
+
+</head>
+<body>
+    <div class="w page">
+        <div class="grid layout_vertical_70-30">
+            <div class="w h grid-item">
+                <div class="w h scoll" id="admin-display">
+                    Welcome to the Admin Console!
+                    <br>
+                    Commands are based of the first 6 characters
+                    <br>
+                    Type HELPME for help :)
+                    <br>
+                    <br>
+                </div>
+            </div>
+            <div class="w h grid-item">
+                <div class="w h grid layout_vertical_90-10">
+                    <div class="w h grid-item">
+                        <textarea class="w h text-area entry" id="admin-entry" spellcheck="false"></textarea>
+                    </div>
+                    <div class="w h grid-item">
+                        <button class="w h submit" onclick="sendCmd()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="static/js/admin.js"></script>
+</body>
+</html>

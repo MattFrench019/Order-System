@@ -1,0 +1,61 @@
+
+.page {
+    height: 95vh;
+}
+
+.grid {
+    display: grid;
+    row-gap: 0;
+    column-gap: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.w {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.h {
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-top: 0;
+    border-bottom: 0;
+}
+
+.grid-item {
+
+}
+
+.grid.layout_vertical_70-30 {
+    grid-template-rows: 70% 30%;
+}
+
+.grid.layout_vertical_90-10 {
+    grid-template-rows: 90% 10%;
+}
+
+.text-area {
+    resize: none;
+}
+
+.text-area.entry {
+    background: #f0f0f0;
+    font-size: large;
+}
+
+.submit {
+    background: #b8b8b8;
+}
+
+.scoll {
+    overflow-y: scroll;
+}
