@@ -7,11 +7,17 @@ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 # Compatibility
 from __future__ import print_function
 
+# Used for cookie authenticatiom
+from time import time
+
 # Imports optimised for readability
-from flask import request, jsonify, render_template, Flask
+from flask import request, jsonify, render_template, Flask, make_response
 
 # For connection to DB
 import mysql.connector as sql
+
+ADMIN_PASSWORD = 'adminpassword'
+TIME_OUT = 3600
 
 # Create flask app
 app = Flask(__name__)
@@ -20,6 +26,7 @@ app = Flask(__name__)
 db = sql.connect(
 	host='34.89.161.143',
 	user='root',
+	# TODO Secure Password
 	password='password',
 	database='OrderSystem'
 )
@@ -81,7 +88,6 @@ class OrderList(ListLogic):
 		db.commit()
 
 	def add(self, _object):
-		print('hello world')
 		cursor = db.cursor()
 		query = "INSERT INTO orders (id, items, tablenum) VALUES ({}, '{}', {});".format(str(_object.id), str(_object.list)[1:-1], str(_object.table))
 		cursor.execute(query)
@@ -94,7 +100,6 @@ class OrderList(ListLogic):
 		for order in self.list:
 			return_list.append(order.tuple)
 
-		print(return_list)
 		return return_list
 
 
@@ -103,8 +108,8 @@ class Order:
 
 	# Constructor
 	def __init__(self, _id, _list, table):
-		self.id = _id       # Id
-		self.list = _list   # List of items
+		self.id = _id  # Id
+		self.list = _list  # List of items
 		self.table = table  # Table number
 
 	# Generates the price
@@ -117,7 +122,6 @@ class Order:
 
 		for item in self.list:
 			price += items_list[int(item) - 1]
-
 
 		# Round to avoid floating-point rounding errors
 		return round(price, 2)
@@ -144,7 +148,6 @@ class Order:
 		for item in self.list:
 			return_list.append((item, items_list[int(item) - 1]))
 
-		print(return_list)
 		return return_list
 
 
@@ -227,6 +230,51 @@ def edit_order():
 	return jsonify(200)
 
 
+@app.route('/admin/backend', methods=['GET', 'POST'])
+def admin_backend():
+	full_cmd = request.args.get('cmd')
+	cmd = full_cmd[0:6].upper()
+	sub_cmd = full_cmd[7:]
+
+	if request.cookies.get('admin_auth') is None:
+		auth = False
+
+	else:
+		if time() <= float(request.cookies.get('admin_auth')):
+			auth = True
+
+		elif time() >= float(request.cookies.get('admin_auth')):
+			auth = False
+
+		else:
+			auth = False
+
+
+	if cmd == 'SIGNIN':
+		if sub_cmd == ADMIN_PASSWORD:
+			response = make_response('Login Accepted')
+			response.set_cookie('admin_auth', str(int(time()) + TIME_OUT))
+			return response
+		else:
+			return 'Invalid Login'
+
+	elif cmd == 'HELPME':
+		return 'Current commands are:\
+				\n HELPME - Get help with commands\
+				\n SIGNIN <password> - Authenticate with the server\
+				\n RELOAD - Forces a reconnect to the database\n'
+
+	elif cmd == 'RELOAD' and auth is True:
+		db.reconnect()
+		return 'Reconnected'
+
+	elif auth is False:
+		return 'Authentication Needed'
+
+	else:
+		return 'Command Error'
+
+
 ### -------Frontend Portal------- ###
 @app.route('/waiter', methods=['GET'])
 def waiter_portal():
@@ -234,8 +282,10 @@ def waiter_portal():
 
 
 @app.route('/admin', methods=['GET'])
-def waiter_portal():
-	return render_template('admin.html')
+def admin_portal():
+	response = make_response(render_template('admin.html'))
+	return response
+
 
 # Main
 if __name__ == '__main__':
