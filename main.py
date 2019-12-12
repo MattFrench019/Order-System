@@ -24,12 +24,10 @@ configparser.read('main.config')
 config = configparser.get
 
 ADMIN_PASSWORD = config('main-config', 'admin-password')
-TIME_OUT = config('main-config', 'admin-timeout')
+TIME_OUT = int(config('main-config', 'admin-timeout'))
 
 # Create flask app
 app = Flask(__name__)
-
-
 
 unix_sock = '/cloudsql/{}'.format(config('main-config', 'db-connection-name'))
 
@@ -197,7 +195,7 @@ items = ItemList()
 orders = OrderList()
 
 # Init Tables
-tables = range(1, config('main-config', 'tables') + 1)
+tables = range(1, int(config('main-config', 'tables')) + 1)
 
 
 ### --------Backend Handles------- ###
