@@ -16,19 +16,29 @@ from flask import request, jsonify, render_template, Flask, make_response
 # For connection to DB
 import mysql.connector as sql
 
-ADMIN_PASSWORD = 'adminpassword'
-TIME_OUT = 3600
+# For parsing config file
+from configparser import RawConfigParser
+
+configparser = RawConfigParser()
+configparser.read('main.config')
+config = configparser.get
+
+ADMIN_PASSWORD = config('main-config', 'admin-password')
+TIME_OUT = config('main-config', 'admin-timeout')
 
 # Create flask app
 app = Flask(__name__)
 
+
+
+unix_sock = '/cloudsql/{}'.format(config('main-config', 'db-connection-name'))
+
 # Connection to DB
 db = sql.connect(
-	host='34.89.161.143',
-	user='root',
-	# TODO Secure Password
-	password='password',
-	database='OrderSystem'
+	unix_socket=unix_sock,
+	user=config('main-config', 'db-user'),
+	password=config('main-config', 'db-password'),
+	database=config('main-config', 'db-name')
 )
 
 
@@ -187,7 +197,7 @@ items = ItemList()
 orders = OrderList()
 
 # Init Tables
-tables = range(1, 12 + 1)
+tables = range(1, config('main-config', 'tables') + 1)
 
 
 ### --------Backend Handles------- ###
