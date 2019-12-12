@@ -5,5 +5,9 @@ handlers:
   static_dir: static
   expiration: 30s
 
+- url: /favicon\.ico
+  static_files: static/images/favicon.ico
+  upload: static/images/favicon\.ico
+
 - url: /.*
   script: auto
