@@ -45,7 +45,7 @@ db = sql.connect(
 items = classes.ItemList(db)
 
 # Init Orders list
-orders = classes.OrderList(db)
+orders = classes.OrderList(db, items)
 
 # Init Tables
 tables = range(1, int(config('main-config', 'tables')) + 1)

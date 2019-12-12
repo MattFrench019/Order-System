@@ -39,13 +39,14 @@ class ListLogic:
 class OrderList(ListLogic):
 
 	# Constructor
-	def __init__(self, db):
+	def __init__(self, db, items_list):
 		super(OrderList, self).__init__('orders', db)
+		self.items_list = items_list
 
 	def _create_objects(self, _list):
 		new_list = []
 		for order in _list:
-			new_list.append(Order(order[0], order[1].split(','), order[2]))
+			new_list.append(Order(order[0], order[1].split(','), order[2], self.items_list))
 
 		return new_list
 
