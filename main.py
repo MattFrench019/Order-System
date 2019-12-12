@@ -54,7 +54,7 @@ class ListLogic:
 		cursor = db.cursor()
 		cursor.execute('SELECT * FROM {}'.format(self.db_table))
 
-		return self._create_objects(cursor.fetchall())
+		return sorted(self._create_objects(cursor.fetchall()), key=lambda x: x.id)
 
 	# Public getter for the next id for a new order
 	@property
@@ -101,6 +101,12 @@ class OrderList(ListLogic):
 			return_list.append(order.tuple)
 
 		return return_list
+
+	def delete(self, order_id):
+		cursor = db.cursor()
+		query = "DELETE FROM orders WHERE id = {};".format(order_id)
+		cursor.execute(query)
+		db.commit()
 
 
 # Holds the details for an order
@@ -219,6 +225,10 @@ def edit_order():
 
 	# Order id
 	order_id = int(request.args.get('id'))
+
+	if order_items == ['']:
+		orders.delete(order_id)
+		return jsonify(200)
 
 	# We need to turn all of the values into integers
 	order_items = [int(x) for x in order_items]
